@@ -1,0 +1,17 @@
+---
+- name: Hunter Wilcox - Linux Setup
+  hosts: localhost
+  connection: local
+  vars:
+    home_dir: "{{ lookup('env', 'HOME') }}"
+    username: "{{ lookup('env', 'USER') }}"
+    git_username: "Hunter Wilcox"
+    git_email: "hunter.wilcox@judgeglass.net"
+    is_wsl: true
+    is_arm: false
+    is_x86: true
+  roles:
+    - common
+    - cppdev
+    - pythondev
+    - { role: gui, when: is_wsl == false }

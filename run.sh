@@ -1,0 +1,1 @@
+ansible-playbook -i inventory.ini -l localhost playbooks/wslsetup.yml -K

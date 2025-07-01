@@ -1,0 +1,56 @@
+---
+- name: Add Signal Keyring
+  become: true
+  ansible.builtin.apt_key:
+    url: https://updates.signal.org/desktop/apt/keys.asc
+    keyring: /etc/apt/trusted.gpg.d/signal-desktop.gpg
+- name: Add Signal Repo
+  become: true
+  ansible.builtin.apt_repository:
+    repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main"
+    filename: signal
+- name: Add Microsoft Keyring
+  become: true
+  ansible.builtin.apt_key:
+    url: https://packages.microsoft.com/keys/microsoft.asc
+    keyring: /etc/apt/trusted.gpg.d/packages.microsoft.gpg
+- name: Add Microsoft Repo
+  become: true
+  ansible.builtin.apt_repository:
+    repo: "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main"
+    filename: microsoft
+- name: Install GUI APT Packages
+  become: true
+  ansible.builtin.apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - flatpak
+      - code
+      - wireshark
+      - signal-desktop
+      - gnucash
+      - steam
+      - keepassxc
+      - prusa-slicers
+      - qbittorrent
+- name: Getting Minecraft DEB
+  ansible.builtin.get_url:
+    url: https://launcher.mojang.com/download/Minecraft.deb
+    dest: "/tmp/linux-setup"
+- name: Install Minecraft
+  become: true
+  ansible.builtin.apt:
+    deb: "/tmp/linux-setup/Minecraft.deb"
+- name: Getting ProtonVPN DEB
+  ansible.builtin.get_url:
+    url: https://repo.protonvpn.com/debian/dists/stable/main/binary-all/protonvpn-stable-release_1.0.8_all.deb
+    dest: "/tmp/linux-setup"
+- name: Install ProtonVPN
+  become: true
+  ansible.builtin.apt:
+    deb: "/tmp/linux-setup/protonvpn-stable-release_1.0.8_all.deb"
+- name: Install ProtonVPN App
+  become: true
+  ansible.builtin.apt:
+    name: "proton-vpn-gnome-desktop"

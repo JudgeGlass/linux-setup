@@ -1,0 +1,54 @@
+---
+- name: Make Temp Directory
+  ansible.builtin.file:
+    path: /tmp/linux-setup
+    state: directory
+
+- name: Update APT Cache
+  become: true
+  ansible.builtin.apt:
+    update_cache: true
+
+- name: APT Upgrade
+  become: true
+  ansible.builtin.apt:
+    upgrade: "yes"
+
+- name: Install Common APT Packages
+  become: true
+  ansible.builtin.apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - openjdk-8-jdk
+      - openjdk-17-jdk
+      - vim
+      - tmux
+      - git
+      - yt-dlp
+      - unzip
+      - docker
+      - docker-compose
+      - freecad
+      - htop
+
+- name: Updating Global Git Email
+  community.general.git_config:
+    name: user.email
+    scope: global
+    value: "{{ git_email }}"
+
+- name: Updating Global Git Username
+  community.general.git_config:
+    name: user.email
+    scope: global
+    value: "{{ git_username }}"
+
+- name: Generate SSH Key (ed25519)
+  community.crypto.openssh_keypair:
+    path: "{{ home_dir }}/.ssh/id_ssh_ed25519"
+    type: ed25519
+
+- name: Install TailScale
+  ansible.builtin.shell:
+    curl -fsSL https://tailscale.com/install.sh | sh

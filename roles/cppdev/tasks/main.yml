@@ -1,0 +1,39 @@
+- name: Install Base C++ APT Packages
+  become: true
+  ansible.builtin.apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - g++
+      - gcc
+      - make
+      - cmake
+      - gdb
+      - clang-format
+      - binutils
+
+- name: Install Other C++ APT Packages
+  become: true
+  ansible.builtin.apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - gcc-arm-none-eabi
+      - libsdl2-dev
+      - libsdl2-image-dev
+      - libsdl2-mixer-dev
+      - libsdl2-net-dev
+      - libsdl2-ttf-dev
+      - libsdl2-gfx-dev
+      - libglew-dev
+      - libglfw3-dev
+      - libglm-dev
+
+- name: Get stb Includes
+  become: true
+  ansible.builtin.get_url:
+    url: "{{ item }}"
+    dest: /usr/local/include
+  loop:
+    - https://raw.githubusercontent.com/nothings/stb/master/stb_image.h
+    - https://raw.githubusercontent.com/nothings/stb/master/stb_ds.h
