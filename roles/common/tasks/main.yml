@@ -29,7 +29,6 @@
       - unzip
       - docker-ce
       - docker-compose
-      - freecad
       - htop
 
 - name: Updating Global Git Email

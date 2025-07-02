@@ -34,6 +34,7 @@
       - keepassxc
       - prusa-slicers
       - qbittorrent
+      - freecad
 - name: Getting Minecraft DEB
   ansible.builtin.get_url:
     url: https://launcher.mojang.com/download/Minecraft.deb
