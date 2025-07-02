@@ -27,7 +27,7 @@
       - git
       - yt-dlp
       - unzip
-      - docker
+      - docker-ce
       - docker-compose
       - freecad
       - htop
