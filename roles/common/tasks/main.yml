@@ -40,7 +40,7 @@
 
 - name: Updating Global Git Username
   community.general.git_config:
-    name: user.email
+    name: user.name
     scope: global
     value: "{{ git_username }}"
 
