@@ -3,22 +3,35 @@
   become: true
   ansible.builtin.apt_key:
     url: https://updates.signal.org/desktop/apt/keys.asc
-    keyring: /etc/apt/trusted.gpg.d/signal-desktop.gpg
+    keyring: /usr/share/keyrings/signal-desktop-keyring.gpg
 - name: Add Signal Repo
   become: true
-  ansible.builtin.apt_repository:
-    repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main"
-    filename: signal
+  ansible.builtin.get_url:
+    url: https://updates.signal.org/static/desktop/apt/signal-desktop.sources
+    dest: /etc/apt/sources.list.d/signal-desktop.sources
 - name: Add Microsoft Keyring
   become: true
   ansible.builtin.apt_key:
     url: https://packages.microsoft.com/keys/microsoft.asc
-    keyring: /etc/apt/trusted.gpg.d/packages.microsoft.gpg
+    keyring: /usr/share/keyrings/microsoft.gpg
 - name: Add Microsoft Repo
   become: true
   ansible.builtin.apt_repository:
-    repo: "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main"
+    repo: "deb [arch=amd64,arm64,armhf signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/code stable main"
     filename: microsoft
+- name: Add Steam Keyring
+  become: true
+  ansible.builtin.apt_key:
+    url: https://repo.steampowered.com/steam/archive/stable/steam.gpg
+    keyring: /usr/share/keyrings/steam.gpg
+- name: Add Steam Repo
+  become: true
+  ansible.builtin.apt_repository:
+    repo: "deb [arch=amd64,i386 signed-by=/usr/share/keyrings/steam.gpg] https://repo.steampowered.com/steam/ stable steam deb-src [arch=amd64,i386 signed-by=/usr/share/keyrings/steam.gpg] https://repo.steampowered.com/steam/ stable steam"
+    filename: steam-stable.list
+- name: Setup i386 Architecture for Steam
+  become: true
+  ansible.builtin.shell: dpkg --add-architecture i386
 - name: Install GUI APT Packages
   become: true
   ansible.builtin.apt:
@@ -30,11 +43,9 @@
       - wireshark
       - signal-desktop
       - gnucash
-      - steam
+      - steam-launcher
       - keepassxc
-      - prusa-slicers
       - qbittorrent
-      - freecad
 - name: Getting Minecraft DEB
   ansible.builtin.get_url:
     url: https://launcher.mojang.com/download/Minecraft.deb
@@ -51,7 +62,21 @@
   become: true
   ansible.builtin.apt:
     deb: "/tmp/linux-setup/protonvpn-stable-release_1.0.8_all.deb"
-- name: Install ProtonVPN App
+- name: Configure Flatpak Remote
   become: true
-  ansible.builtin.apt:
-    name: "proton-vpn-gnome-desktop"
+  community.general.flatpak_remote:
+    name: flathub
+    state: present
+    flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
+- name: Install Flatpak Apps
+  become: true
+  community.general.flatpak:
+    name: "{{ item }}"
+    state: present
+    remote: flathub
+  loop:
+    - com.discordapp.Discord
+    - com.prusa3d.PrusaSlicer
+    - org.freecad.FreeCAD
+    - io.github.ungoogled_software.ungoogled_chromium
+    - org.DolphinEmu.dolphin-emu

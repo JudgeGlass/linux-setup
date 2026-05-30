@@ -1,0 +1,30 @@
+---
+- name: Add User To Docker Group
+  when: not is_docker
+  become: true
+  ansible.builtin.user:
+    name: "{{ username }}"
+    groups: docker
+    append: true
+- name: Get list of docker compose directories
+  ansible.builtin.find:
+    paths: /setup/configs/docker_compose_files
+    file_type: directory
+  register: docker_compose_dirs
+- name: Copy docker compose files to /home/{{ username }}/docker
+  ansible.builtin.copy:
+    src: "{{ item.path }}/"
+    dest: "/home/{{ username }}/docker/{{ item.path | basename }}/"
+    mode: "0755"
+  loop: "{{ docker_compose_dirs.files }}"
+- name: Run env file setup for each docker compose directory
+  ansible.builtin.shell:
+    chdir: "/home/{{ username }}/docker/{{ item.path | basename }}"
+    cmd: "sh env.sh"
+  loop: "{{ docker_compose_dirs.files }}"
+- name: Run docker compose setup for each docker compose directory
+  community.docker.docker_compose_v2:
+    up: true
+    project_src: "/home/{{ username }}/docker/{{ item.path | basename }}"
+  loop: "{{ docker_compose_dirs.files }}"
+    

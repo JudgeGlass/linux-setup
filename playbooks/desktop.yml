@@ -1,5 +1,5 @@
 ---
-- name: Hunter Wilcox - Linux Setup - WSL
+- name: Hunter Wilcox - Linux Setup - DESKTOP
   hosts: localhost
   connection: local
   vars:
@@ -14,4 +14,4 @@
     - common
     - cppdev
     - pythondev
-    - { role: gui, when: is_wsl == false }
+    - gui

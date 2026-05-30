@@ -1,0 +1,17 @@
+services:
+  jellyfin:
+    image: jellyfin/jellyfin
+    container_name: jellyfin
+    ports:
+      - 8096:8096/tcp
+      - 7359:7359/udp
+    volumes:
+      - /home/hwilcox/jellyfin-docker/config:/config
+      - /home/hwilcox/jellyfin-docker/cache:/cache
+      - type: bind
+        source: /mnt/Disk1
+        target: /media
+    restart: 'unless-stopped'
+    # Optional - may be necessary for docker healthcheck to pass if running in host network mode
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'

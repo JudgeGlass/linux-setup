@@ -1,5 +1,5 @@
 ---
-- name: Hunter Wilcox - Linux Setup - WSL
+- name: Hunter Wilcox - Linux Setup - SERVER
   hosts: localhost
   connection: local
   vars:
@@ -7,11 +7,7 @@
     username: "{{ lookup('env', 'USER') }}"
     git_username: "Hunter Wilcox"
     git_email: "hunter.wilcox@judgeglass.net"
-    is_wsl: true
-    is_arm: false
-    is_x86: true
+    is_docker: "{{ lookup('env', 'IS_DOCKER') }}"
   roles:
     - common
-    - cppdev
-    - pythondev
-    - { role: gui, when: is_wsl == false }
+    - server

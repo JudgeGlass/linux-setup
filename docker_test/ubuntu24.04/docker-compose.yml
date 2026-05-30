@@ -1,0 +1,10 @@
+services:
+  ubuntu_test_env:
+    image: ubuntu:24.04
+    container_name: ubuntu
+    volumes:
+      - ../..:/setup
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - PLAYBOOK=${PLAYBOOK}
+    entrypoint: ["bash", "/setup/docker_test/ubuntu24.04/entrypoint.sh"]

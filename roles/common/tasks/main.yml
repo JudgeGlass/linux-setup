@@ -14,6 +14,19 @@
   ansible.builtin.apt:
     upgrade: "yes"
 
+- name: Install Docker Keyring
+  become: true
+  ansible.builtin.get_url:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    dest: /etc/apt/keyrings/docker.asc
+    mode: "0644"
+
+- name: Add Docker Repo
+  become: true
+  ansible.builtin.apt_repository:
+    repo: "deb [arch=amd64,arm64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+    state: present
+
 - name: Install Common APT Packages
   become: true
   ansible.builtin.apt:
@@ -27,9 +40,14 @@
       - git
       - yt-dlp
       - unzip
-      - docker-ce
-      - docker-compose
       - htop
+      - curl
+      - docker-ce 
+      - docker-ce-cli 
+      - containerd.io 
+      - docker-buildx-plugin 
+      - docker-compose-plugin
+
 
 - name: Updating Global Git Email
   community.general.git_config:
@@ -50,4 +68,4 @@
 
 - name: Install TailScale
   ansible.builtin.shell:
-    curl -fsSL https://tailscale.com/install.sh | sh
+    "curl -fsSL https://tailscale.com/install.sh | sh"
