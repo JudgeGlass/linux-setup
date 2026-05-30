@@ -24,7 +24,6 @@
   loop: "{{ docker_compose_dirs.files }}"
 - name: Run docker compose setup for each docker compose directory
   community.docker.docker_compose_v2:
-    up: true
     project_src: "/home/{{ username }}/docker/{{ item.path | basename }}"
   loop: "{{ docker_compose_dirs.files }}"
     
